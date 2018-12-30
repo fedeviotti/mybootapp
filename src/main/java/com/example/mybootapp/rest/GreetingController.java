@@ -6,12 +6,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.mybootapp.config.DatabaseConfig;
 import com.example.mybootapp.model.Greeting;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.json.JSONObject;
 
 @RestController
 public class GreetingController {
@@ -51,18 +55,27 @@ public class GreetingController {
                             String.format(template, name));
     }
     
-    @RequestMapping("/api/public")
-    public String pubblico() {
-        return "pubblico";
+    @RequestMapping(value = "/api/public", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String publicEndpoint() {
+    	return new JSONObject()
+                .put("message", "Hello from a public endpoint! You don\'t need to be authenticated to see this.")
+                .toString();
     }
     
-    @RequestMapping("/api/private")
-    public String privato() {
-        return "privato";
+    @RequestMapping(value = "/api/private", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody	
+    public String privateEndpoint() {
+    	return new JSONObject()
+                .put("message", "Hello from a private endpoint! You need to be authenticated to see this.")
+                .toString();
     }
     
-    @RequestMapping("/api/private-scoped")
-    public String privatoScoped() {
-        return "privato-scoped";
+    @RequestMapping(value = "/api/private-scoped", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public String privateScopedEndpoint() {
+    	return new JSONObject()
+                .put("message", "Hello from a private endpoint! You need to be authenticated and have a scope of read:messages to see this.")
+                .toString();
     }
 }
